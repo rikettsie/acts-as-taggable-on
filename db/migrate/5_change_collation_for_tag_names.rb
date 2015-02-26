@@ -1,6 +1,6 @@
 # This migration is added to circumvent issue #623 and have special characters
 # work properly
-class ChangeCollationForTagNames << ActiveRecord::Migration
+class ChangeCollationForTagNames < ActiveRecord::Migration
 
   def up
     if ActsAsTaggableOn::Utils.using_mysql?
