@@ -1,6 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 require 'db/migrate/2_add_missing_unique_indices.rb'
+require 'db/migrate/5_change_collation_for_tag_names.rb'
 
 shared_examples_for 'without unique index' do
   prepend_before(:all) { AddMissingUniqueIndices.down }
@@ -50,16 +51,6 @@ describe ActsAsTaggableOn::Tag do
     context 'with some special characters combinations', if: using_mysql? do
       it 'should not raise an invalid encoding exception' do
         expect{ActsAsTaggableOn::Tag.named_any(["holä", "hol'ä"])}.not_to raise_error
-      end
-    end
-    context 'binary collation with indexes and special characters', if: using_mysql? do
-      before(:each) do
-        ActsAsTaggableOn::Tag.create(name: 'spécial')
-        ActsAsTaggableOn::Tag.create(name: 'special')
-      end
-
-      it 'should store both tags without errors' do
-        expect(ActsAsTaggableOn::Tag.named_any(["special", "spécial"]).count).to eq(2)
       end
     end
   end
@@ -328,6 +319,16 @@ describe ActsAsTaggableOn::Tag do
     it 'should find the least popular tags' do
       expect(ActsAsTaggableOn::Tag.least_used(3).first.name).to eq("sports")
       expect(ActsAsTaggableOn::Tag.least_used(3).length).to eq(3)
+    end
+  end
+
+  describe 'tags different for accented characters only', if: using_mysql? do
+    ChangeCollationForTagNames.up
+    ActsAsTaggableOn::Tag.create(name: 'spécial')
+    ActsAsTaggableOn::Tag.create(name: 'special')
+
+    it 'should store both tags without errors' do
+      expect(ActsAsTaggableOn::Tag.named_any(["special", "spécial"]).count).to eq(2)
     end
   end
 end

@@ -12,6 +12,10 @@ As such, a _Feature_ would map to either major or minor. A _bug fix_ to a patch.
   * Performance
   * Misc
 
+### [3.4.4 / 2015-02-26](v3.4.4...v3.4.5)
+* Fixes
+   * [@rikettsie Fixed collation for MySql](https://github.com/mbleigh/acts-as-taggable-on/pull/634)
+
 ### [3.4.4 / 2015-02-11](https://github.com/mbleigh/acts-as-taggable-on/compare/v3.4.3...v3.4.4)
 
   * Fixes
