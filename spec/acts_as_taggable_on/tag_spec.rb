@@ -4,10 +4,14 @@ require 'db/migrate/2_add_missing_unique_indices.rb'
 require 'db/migrate/5_change_collation_for_tag_names.rb'
 
 shared_examples_for 'without unique index' do
-  prepend_before(:all) { AddMissingUniqueIndices.down }
+  prepend_before(:all) do
+    AddMissingUniqueIndices.down
+    ChangeCollationForTagNames.down
+  end
   append_after(:all) do
     ActsAsTaggableOn::Tag.delete_all
     AddMissingUniqueIndices.up
+    ChangeCollationForTagNames.down
   end
 end
 
