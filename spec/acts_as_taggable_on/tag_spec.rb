@@ -52,6 +52,16 @@ describe ActsAsTaggableOn::Tag do
         expect{ActsAsTaggableOn::Tag.named_any(["holä", "hol'ä"])}.not_to raise_error
       end
     end
+    context 'binary collation with indexes and special characters', if: using_mysql? do
+      before(:each) do
+        ActsAsTaggableOn::Tag.create(name: 'spécial')
+        ActsAsTaggableOn::Tag.create(name: 'special')
+      end
+
+      it 'should store both tags without errors' do
+        expect(ActsAsTaggableOn::Tag.named_any(["special", "spécial"]).count).to eq(2)
+      end
+    end
   end
 
   describe 'find or create by name' do
@@ -309,7 +319,7 @@ describe ActsAsTaggableOn::Tag do
         tag.save!
       end
     end
-    
+
     it 'should find the most popular tags' do
       expect(ActsAsTaggableOn::Tag.most_used(3).first.name).to eq("golden_syrup")
       expect(ActsAsTaggableOn::Tag.most_used(3).length).to eq(3)
