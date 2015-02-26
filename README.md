@@ -56,19 +56,12 @@ Review the generated migrations then migrate :
 ```shell
 rake db:migrate
 ```
-
-MySql users should also run the following rake task to get special characters
-work correctly for tag names, see [issue #623](https://github.com/mbleigh/acts-as-taggable-on/issues/623):
+#### To MySql users
+If your application is deployed from the schema.rb and not by running migrations
+you can patch at any time the problem of tag special characters [issue 623](https://github.com/mbleigh/acts-as-taggable-on/issues/623) by running:
 
 ```shell
 rake acts_as_taggable_on_engine:tag_names:collate
-```
-
-or, alternatively, execute the following command in the MySql console:
-
-```shell
-USE my_wonderful_app_db;
-ALTER TABLE tags MODIFY name VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_bin;
 ```
 
 #### Upgrading
