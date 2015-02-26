@@ -2,14 +2,14 @@
 # work properly
 class ChangeCollationForTagNames < ActiveRecord::Migration
 
-  def up
+  def self.up
     if ActsAsTaggableOn::Utils.using_mysql?
-     execute("ALTER TABLE tags MODIFY name varchar(255) CHARACTER SET utf8 COLLATE utf8_bin;") 
+      execute("ALTER TABLE tags MODIFY name varchar(255) CHARACTER SET utf8 COLLATE utf8_bin;")
     end
   end
 
-  def down
-    
+  def self.down
+
   end
 
 end
