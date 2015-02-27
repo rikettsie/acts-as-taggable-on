@@ -69,6 +69,13 @@ module ActsAsTaggableOn
       @remove_unused_tags = false
       @tags_counter = true
       @default_parser = DefaultParser
+      @force_binary_collation = false
+    end
+
+    def strict_case_match=(force_cs)
+      if @force_binary_collation == false
+        @strict_case_match = force_cs
+      end
     end
 
     def delimiter=(string)
@@ -79,6 +86,27 @@ a ActsAsTaggableOn.default_parser instead
 WARNING
       @delimiter = string
     end
+
+    def force_binary_collation=(force_bin)
+      if force_bin == true && ActsAsTaggableOn::Utils.using_msql?
+        apply_binary_collation(true)
+        @force_binary_collation = true
+        @strict_case_match = true
+      else
+        apply_binary_collation(false)
+        @force_binary_collation = false
+        @strict_case_match = false
+      end
+    end
+
+    def self.apply_binary_collation(bincoll)
+      coll = 'utf8_general_ci'
+      if bincoll == true
+        coll = 'utf8_bin'
+      end
+      ActiveRecord::Migration.execute("ALTER TABLE tags MODIFY name varchar(255) CHARACTER SET utf8 COLLATE #{coll};")
+    end
+
   end
 
   setup

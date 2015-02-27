@@ -6,12 +6,12 @@ require 'db/migrate/5_change_collation_for_tag_names.rb'
 shared_examples_for 'without unique index' do
   prepend_before(:all) do
     AddMissingUniqueIndices.down
-    ChangeCollationForTagNames.down
+    ActsAsTaggableOn.force_binary_collation = false
   end
   append_after(:all) do
     ActsAsTaggableOn::Tag.delete_all
     AddMissingUniqueIndices.up
-    ChangeCollationForTagNames.down
+    ActsAsTaggableOn.force_binary_collation = false
   end
 end
 
@@ -326,13 +326,20 @@ describe ActsAsTaggableOn::Tag do
     end
   end
 
-  describe 'tags different for accented characters only', if: using_mysql? do
-    ChangeCollationForTagNames.up
-    ActsAsTaggableOn::Tag.create(name: 'spécial')
-    ActsAsTaggableOn::Tag.create(name: 'special')
+  describe 'different tags for accented characters only', if: using_mysql? do
 
     it 'should store both tags without errors' do
-      expect(ActsAsTaggableOn::Tag.named_any(["special", "spécial"]).count).to eq(2)
+      ActsAsTaggableOn.force_binary_collation = true
+      ActsAsTaggableOn::Tag.create(name: 'città')
+      ActsAsTaggableOn::Tag.create(name: 'citta')
+      expect(ActsAsTaggableOn::Tag.find_by_name('città')).to eq('città')
+      expect(ActsAsTaggableOn::Tag.find_by_name('citta')).to eq('citta')
+    end
+
+    it 'should not store ~similar~ tags raising a Duplication error' do
+      ActsAsTaggableOn.force_binary_collation = false
+      ActsAsTaggableOn::Tag.create(name: 'spécial')
+      expect{ActsAsTaggableOn::Tag.create(name: 'special')}.to raise_error
     end
   end
 end
