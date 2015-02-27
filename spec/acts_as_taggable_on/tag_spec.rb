@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'spec_helper'
 require 'db/migrate/2_add_missing_unique_indices.rb'
-require 'db/migrate/5_change_collation_for_tag_names.rb'
+
 
 shared_examples_for 'without unique index' do
   prepend_before(:all) do
