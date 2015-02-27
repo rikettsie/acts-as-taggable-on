@@ -88,23 +88,27 @@ WARNING
     end
 
     def force_binary_collation=(force_bin)
-      if force_bin == true && ActsAsTaggableOn::Utils.using_msql?
-        Configuration.apply_binary_collation(true)
-        @force_binary_collation = true
-        @strict_case_match = true
-      else
-        Configuration.apply_binary_collation(false)
-        @force_binary_collation = false
-        @strict_case_match = false
+      if ActsAsTaggableOn::Utils.using_msql?
+        if force_bin == true
+          Configuration.apply_binary_collation(true)
+          @force_binary_collation = true
+          @strict_case_match = true
+        else
+          Configuration.apply_binary_collation(false)
+          @force_binary_collation = false
+          @strict_case_match = false
+        end
       end
     end
 
     def self.apply_binary_collation(bincoll)
-      coll = 'utf8_general_ci'
-      if bincoll == true
-        coll = 'utf8_bin'
+      if ActsAsTaggableOn::Utils.using_msql?
+        coll = 'utf8_general_ci'
+        if bincoll == true
+          coll = 'utf8_bin'
+        end
+        ActiveRecord::Migration.execute("ALTER TABLE tags MODIFY name varchar(255) CHARACTER SET utf8 COLLATE #{coll};")
       end
-      ActiveRecord::Migration.execute("ALTER TABLE tags MODIFY name varchar(255) CHARACTER SET utf8 COLLATE #{coll};")
     end
 
   end
