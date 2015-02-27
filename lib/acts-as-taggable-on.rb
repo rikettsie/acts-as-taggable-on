@@ -89,11 +89,11 @@ WARNING
 
     def force_binary_collation=(force_bin)
       if force_bin == true && ActsAsTaggableOn::Utils.using_msql?
-        apply_binary_collation(true)
+        Configuration.apply_binary_collation(true)
         @force_binary_collation = true
         @strict_case_match = true
       else
-        apply_binary_collation(false)
+        Configuration.apply_binary_collation(false)
         @force_binary_collation = false
         @strict_case_match = false
       end
