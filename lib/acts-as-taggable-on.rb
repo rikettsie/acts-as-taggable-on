@@ -88,7 +88,7 @@ WARNING
     end
 
     def force_binary_collation=(force_bin)
-      if ActsAsTaggableOn::Utils.using_msql?
+      if Utils.using_mysql?
         if force_bin == true
           Configuration.apply_binary_collation(true)
           @force_binary_collation = true
@@ -102,7 +102,7 @@ WARNING
     end
 
     def self.apply_binary_collation(bincoll)
-      if ActsAsTaggableOn::Utils.using_msql?
+      if Utils.using_mysql?
         coll = 'utf8_general_ci'
         if bincoll == true
           coll = 'utf8_bin'
