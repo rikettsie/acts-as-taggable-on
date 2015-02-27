@@ -326,20 +326,4 @@ describe ActsAsTaggableOn::Tag do
     end
   end
 
-  describe 'different tags for accented characters only', if: using_mysql? do
-
-    it 'should store both tags without errors' do
-      ActsAsTaggableOn.force_binary_collation = true
-      ActsAsTaggableOn::Tag.create(name: 'città')
-      ActsAsTaggableOn::Tag.create(name: 'citta')
-      expect(ActsAsTaggableOn::Tag.find_by_name('città')).to eq('città')
-      expect(ActsAsTaggableOn::Tag.find_by_name('citta')).to eq('citta')
-    end
-
-    it 'should not store ~similar~ tags raising a Duplication error' do
-      ActsAsTaggableOn.force_binary_collation = false
-      ActsAsTaggableOn::Tag.create(name: 'spécial')
-      expect{ActsAsTaggableOn::Tag.create(name: 'special')}.to raise_error
-    end
-  end
 end

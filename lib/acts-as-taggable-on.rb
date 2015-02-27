@@ -96,7 +96,6 @@ WARNING
         else
           Configuration.apply_binary_collation(false)
           @force_binary_collation = false
-          @strict_case_match = false
         end
       end
     end
