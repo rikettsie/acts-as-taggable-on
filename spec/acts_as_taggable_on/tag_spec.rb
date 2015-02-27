@@ -6,12 +6,10 @@ require 'db/migrate/2_add_missing_unique_indices.rb'
 shared_examples_for 'without unique index' do
   prepend_before(:all) do
     AddMissingUniqueIndices.down
-    ActsAsTaggableOn.force_binary_collation = false
   end
   append_after(:all) do
     ActsAsTaggableOn::Tag.delete_all
     AddMissingUniqueIndices.up
-    ActsAsTaggableOn.force_binary_collation = false
   end
 end
 
