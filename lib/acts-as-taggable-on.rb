@@ -70,6 +70,7 @@ module ActsAsTaggableOn
       @tags_counter = true
       @default_parser = DefaultParser
       @force_binary_collation = false
+      @tag_max_size = 255
     end
 
     def strict_case_match=(force_cs)
@@ -85,6 +86,10 @@ and will be removed from v4.0+, use  \
 a ActsAsTaggableOn.default_parser instead
 WARNING
       @delimiter = string
+    end
+
+    def tag_max_size=(max_size)
+      @tag_max_size = max_size
     end
 
     def force_binary_collation=(force_bin)
