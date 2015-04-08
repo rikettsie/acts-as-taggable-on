@@ -2,7 +2,6 @@
 require 'spec_helper'
 require 'db/migrate/2_add_missing_unique_indices.rb'
 
-
 shared_examples_for 'without unique index' do
   prepend_before(:all) { AddMissingUniqueIndices.down }
   append_after(:all) do
@@ -15,7 +14,6 @@ describe ActsAsTaggableOn::Tag do
   before(:each) do
     @tag = ActsAsTaggableOn::Tag.new
     @user = TaggableModel.create(name: 'Pablo')
-    ActsAsTaggableOn.tag_max_size = 255
   end
 
 
@@ -304,10 +302,15 @@ describe ActsAsTaggableOn::Tag do
   end
 
   describe 'tag name length validation' do
+    before(:each) do
+      ActsAsTaggableOn.tag_max_size = 400
+    end
+    after(:each) do
+      ActsAsTaggableOn.tag_max_size = 255
+    end
     it 'should not save a tag with name length longer than the defined one' do
-      ActsAsTaggableOn.tag_max_size = 4
-      longer_tag = ActsAsTaggableOn::Tag.new(name: 'cool!')
-      expect{longer_tag.save!}.to raise_error(ActiveRecord::RecordInvalid)
+      long_name = 'a' * 500
+      expect{ActsAsTaggableOn::Tag.create(name: long_name)}.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 
