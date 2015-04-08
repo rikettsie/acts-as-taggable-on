@@ -306,9 +306,8 @@ describe ActsAsTaggableOn::Tag do
   describe 'tag name length validation' do
     before { ActsAsTaggableOn.tag_max_size = 4 }
     it 'should not save a tag with name length longer than the defined one' do
-      longer_tag = ActsAsTaggableOn::Tag.create(name: 'cool!')
-      # rise exception ActiveRecord::RecordInvalid
-      expect(-> { longer_tag.save! }).to raise_error 
+      longer_tag = ActsAsTaggableOn::Tag.new(name: 'cool!')
+      expect{longer_tag.save!}.to raise_error(ActiveRecord::RecordInvalid)
     end
   end
 
